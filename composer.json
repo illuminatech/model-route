@@ -1,0 +1,39 @@
+{
+    "name": "illuminatech/model-route",
+    "description": "Allows continuing route matching in case bound model does not exist",
+    "keywords": ["laravel", "routing", "route", "model", "slug"],
+    "license": "BSD-3-Clause",
+    "support": {
+        "issues": "https://github.com/illuminatech/model-route/issues",
+        "wiki": "https://github.com/illuminatech/model-route/wiki",
+        "source": "https://github.com/illuminatech/model-route"
+    },
+    "authors": [
+        {
+            "name": "Paul Klimov",
+            "email": "klimov.paul@gmail.com"
+        }
+    ],
+    "require": {
+        "illuminate/routing": "^5.8 || ^6.0"
+    },
+    "require-dev": {
+        "illuminate/database": "*",
+        "phpunit/phpunit": "^7.5 || ^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Illuminatech\\ModelRoute\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Illuminatech\\ModelRoute\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
+}
