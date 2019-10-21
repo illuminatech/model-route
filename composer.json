@@ -19,6 +19,7 @@
     },
     "require-dev": {
         "illuminate/database": "*",
+        "illuminate/events": "*",
         "phpunit/phpunit": "^7.5 || ^8.0"
     },
     "autoload": {

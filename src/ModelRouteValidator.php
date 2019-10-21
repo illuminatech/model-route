@@ -42,6 +42,7 @@ use Illuminate\Routing\Matching\ValidatorInterface;
  * ```
  *
  * @see \Illuminate\Routing\Route::$validators
+ * @see \Illuminate\Routing\Middleware\SubstituteBindings
  *
  * @author Paul Klimov <klimov.paul@gmail.com>
  * @since 1.0
@@ -96,6 +97,7 @@ class ModelRouteValidator implements ValidatorInterface
 
         foreach ($this->getBinders() as $parameterName => $binder) {
             if (in_array($parameterName, $routeVariables)) {
+                $route = clone $route;
                 $route->bind($request);
 
                 $model = $this->findParameterBinding($route->parameter($parameterName), $binder);
@@ -104,7 +106,11 @@ class ModelRouteValidator implements ValidatorInterface
                     return false;
                 }
 
-                $route->setParameter($parameterName, $model);
+                $router = $this->getRouter($route);
+
+                $router->bind($parameterName, function() use ($model) {
+                    return $model;
+                });
 
                 return true;
             }
@@ -124,7 +130,8 @@ class ModelRouteValidator implements ValidatorInterface
     {
         if (is_string($binder)) {
             /* @var $model \Illuminate\Database\Eloquent\Model */
-            if (strpos($binder, '@') == false) {
+            if (strpos($binder, '@') === false) {
+
                 $model = $binder;
 
                 return $model::query()->whereKey($value)->first();
@@ -136,5 +143,24 @@ class ModelRouteValidator implements ValidatorInterface
         }
 
         return call_user_func($binder, $value);
+    }
+
+    /**
+     * Extracts router instance for the specified route.
+     *
+     * @param  Route  $route route instance.
+     * @return \Illuminate\Routing\Router router related to the given route.
+     */
+    protected function getRouter(Route $route)
+    {
+        try {
+            $reflection = new \ReflectionObject($route);
+            $property = $reflection->getProperty('router');
+            $property->setAccessible(true);
+
+            return $property->getValue($route);
+        } catch (\Throwable $e) {
+            return \Illuminate\Support\Facades\Route::getFacadeRoot();
+        }
     }
 }
