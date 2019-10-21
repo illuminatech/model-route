@@ -12,7 +12,9 @@ use Illuminate\Routing\Route;
 use Illuminate\Routing\Matching\ValidatorInterface;
 
 /**
- * ModelRouteValidator
+ * ModelRouteValidator allows check for the particular model binding existence, while matching routing.
+ *
+ * Being registered this validator allows to pass matching to the next route in case model bound to the current one does not exist.
  *
  * ```php
  * namespace App\Providers;
@@ -31,7 +33,7 @@ use Illuminate\Routing\Matching\ValidatorInterface;
  *                 'project' => function ($value) {
  *                      return \App\Models\Project::query()->where('name', $value)->first();
  *                  },
- *             ]);
+ *             ])
  *             ->register();
  *
  *         parent::boot();
@@ -50,12 +52,13 @@ use Illuminate\Routing\Matching\ValidatorInterface;
 class ModelRouteValidator implements ValidatorInterface
 {
     /**
-     * @var array
+     * @var array route parameter binders in format: `[parameterName => binder]`.
+     * @see setBinders()
      */
     private $binders = [];
 
     /**
-     * @return array
+     * @return array route parameter binders in format: `[parameterName => binder]`.
      */
     public function getBinders(): array
     {
@@ -63,7 +66,31 @@ class ModelRouteValidator implements ValidatorInterface
     }
 
     /**
-     * @param  array  $binders
+     * Sets up route parameter binders to be used while route matching.
+     * Each binder can be specified as:
+     *
+     * - string, Eloquent model class name, for example: 'App\Models\User'; in this case parameter binding will be searched in this
+     *   class using a its route key field.
+     *
+     * - string, pair of Eloquent model class name and search field separated by `@` symbol, for example: 'App\Models\Item@slug';
+     *   in this case parameter binding will be searched in the specified model using specified field.
+     *
+     * - callable, a PHP callback, which should accept parameter raw value and return binding for it; in case no binding is found -
+     *   `null` should be returned.
+     *
+     * For example:
+     *
+     * ```php
+     * [
+     *     'blog' => \App\Models\BlogPost::class,
+     *     'item' => \App\Models\Item::class.'@slug',
+     *     'project' => function ($value) {
+     *         return \App\Models\Project::query()->where('name', $value)->first();
+     *     },
+     * ]
+     * ```
+     *
+     * @param  array  $binders route parameter binders in format: `[parameterName => binder]`.
      * @return $this self reference.
      */
     public function setBinders(array $binders): self
@@ -134,7 +161,7 @@ class ModelRouteValidator implements ValidatorInterface
 
                 $model = $binder;
 
-                return $model::query()->whereKey($value)->first();
+                return $model::query()->newModelInstance()->resolveRouteBinding($value);
             }
 
             [$model, $attribute] = explode('@', $binder);
