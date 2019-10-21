@@ -88,7 +88,7 @@ class OrganizationController extends Controller
 }
 ```
 
-However this does not works correctly. The problem is the second route ("organizations.show") will never be matched as
+However, this does not work correctly. The problem is the second route ("organizations.show") will never be matched as
 any organization name will be compared against first route ("users.show") only, triggering 404 error on attempt to
 access organization's page.
 
@@ -151,8 +151,8 @@ use Illuminatech\ModelRoute\ModelRouteValidator;
         'blog' => \App\Models\BlogPost::class, // search using `\App\Models\BlogPost::getRouteKeyName()`
         'item' => \App\Models\Item::class.'@slug', // search using `\App\Models\Item::$slug`
         'project' => function ($value) {
-             return \App\Models\Project::query()->where('name', $value)->first(); // if not found - `null` will be returned
-         },
+            return \App\Models\Project::query()->where('name', $value)->first(); // if not found - `null` will be returned
+        },
     ])
     ->register();
 ```
@@ -160,3 +160,56 @@ use Illuminatech\ModelRoute\ModelRouteValidator;
 > Note: do not specify standard explicit route parameter binding for the parameter covered by `\Illuminatech\ModelRoute\ModelRouteValidator::setBinders()`,
   as it will cause extra redundant database query. Parameter binding will be setup by `\Illuminatech\ModelRoute\ModelRouteValidator` automatically.
 
+
+### Performance Tuning <span id="performance-Tuning"></span>
+
+Remember that you should specify routes for any static pages **before** you write the route with model binding. While this
+extension allows routes matching to continue if binding does not exist, matching check comes with the cost of a database query.
+Thus in our 'GitHub' example routes to any predefined site sections like static pages, contact page or blog, should be
+described beforehand:
+
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Support\Facades\Route;
+
+// predefined site sections should be described beforehand:
+Route::view('about', 'pages/about')->name('about');
+Route::view('privacy-policy', 'pages/privacy-policy')->name('privacy-policy');
+
+Route::get('blog', BlogController::class.'@index')->name('blog.index');
+Route::get('blog/{blogArticle}', BlogController::class.'@show')->name('blog.show');
+
+// only once all other routes are defined, we can use dynamic binding:
+Route::get('{user}', UserController::class.'@show')->name('users.show'); // match will cause a DB query against model `App\Models\User`
+Route::get('{organization}', OrganizationController::class.'@show')->name('organizations.show'); // match will cause a DB query against model `App\Models\Organization`
+```
+
+Unfortunally, you can not always control the order of all your routes definition. Some packages like [Telescope](https://laravel.com/docs/6.x/telescope),
+[Horizon](https://laravel.com/docs/6.x/horizon) and [Nova](https://nova.laravel.com) register their own routes via separated service provider.
+Those routes may appear to be registered after our 'users.show' and 'organizations.show' ones.
+You may manually exclude particular URL paths from the matching using `\Illuminatech\ModelRoute\ModelRouteValidator::setIgnoredUrlPaths()`.
+For example:
+
+```php
+<?php
+
+use Illuminatech\ModelRoute\ModelRouteValidator;
+
+(new ModelRouteValidator)
+    ->setBinders([
+        'user' => \App\Models\User::class.'@username',
+        'organization' => \App\Models\Organization::class.'@name',
+    ])
+    ->setIgnoredUrlPaths([
+        config('telescope.path'), // exclude Telescope URLs
+        config('horizon.path'), // exclude Horizon URLs
+        config('nova.path'), // exclude Nova URLs
+    ])
+    ->register();
+```
+
+With such configuration parsing of the URLs starting from '/telescope', '/horizon' or '/nova' will never trigger a database
+query around 'users.show' and 'organizations.show' routes.

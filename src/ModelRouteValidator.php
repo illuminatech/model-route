@@ -7,6 +7,7 @@
 
 namespace Illuminatech\ModelRoute;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Matching\ValidatorInterface;
@@ -58,6 +59,11 @@ class ModelRouteValidator implements ValidatorInterface
     private $binders = [];
 
     /**
+     * @var array list of URL paths, which should be skipped from matching.
+     */
+    private $ignoredUrlPaths = [];
+
+    /**
      * @return array route parameter binders in format: `[parameterName => binder]`.
      */
     public function getBinders(): array
@@ -101,6 +107,35 @@ class ModelRouteValidator implements ValidatorInterface
     }
 
     /**
+     * @return array list of URL paths, which should be skipped from matching.
+     */
+    public function getIgnoredUrlPaths(): array
+    {
+        return $this->ignoredUrlPaths;
+    }
+
+    /**
+     * Sets up URL path, for which parameter binding should not be performed.
+     * For example:
+     * ```php
+     * [
+     *     config('telescope.path'),
+     *     config('horizon.path'),
+     *     config('nova.path'),
+     * ]
+     * ```
+     *
+     * @param  array  $ignoredUrlPaths list of URL paths, which should be skipped from matching.
+     * @return $this self reference.
+     */
+    public function setIgnoredUrlPaths(array $ignoredUrlPaths): self
+    {
+        $this->ignoredUrlPaths = $ignoredUrlPaths;
+
+        return $this;
+    }
+
+    /**
      * Appends this instance to the route validators.
      *
      * @return $this self reference.
@@ -124,6 +159,12 @@ class ModelRouteValidator implements ValidatorInterface
 
         foreach ($this->getBinders() as $parameterName => $binder) {
             if (in_array($parameterName, $routeVariables)) {
+                foreach ($this->getIgnoredUrlPaths() as $ignoredUrlPath) {
+                    if (Str::startsWith(trim($request->path(), '/'), trim($ignoredUrlPath, '/'))) {
+                        return false;
+                    }
+                }
+
                 $route = clone $route;
                 $route->bind($request);
 

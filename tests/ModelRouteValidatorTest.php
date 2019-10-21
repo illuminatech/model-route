@@ -111,4 +111,35 @@ class ModelRouteValidatorTest extends TestCase
 
         $this->assertSame(1, $queryCount);
     }
+
+    /**
+     * @depends testMatch
+     */
+    public function testIgnoredUrlPaths()
+    {
+        $item = Item::query()->create([
+            'name' => 'item-name',
+            'slug' => 'item-slug',
+        ]);
+
+        (new ModelRouteValidator())
+            ->setBinders([
+                'item' => Item::class.'@slug',
+            ])
+            ->setIgnoredUrlPaths([
+                $item->slug,
+            ])
+            ->register();
+
+        $router = $this->createRouter();
+
+        $router->get('{item}', function (Item $item) {
+            return 'match';
+        });
+        $router->fallback(function () {
+            return 'fallback';
+        });
+
+        $this->assertEquals('fallback', $router->dispatch(Request::create($item->slug, 'GET'))->getContent());
+    }
 }
