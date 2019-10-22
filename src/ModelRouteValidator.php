@@ -122,6 +122,7 @@ class ModelRouteValidator implements ValidatorInterface
      *     config('telescope.path'),
      *     config('horizon.path'),
      *     config('nova.path'),
+     *     'nova-api',
      * ]
      * ```
      *

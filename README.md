@@ -46,7 +46,7 @@ has its own page responding the URL starting from their name:
 - [https://github.com/klimov-paul](https://github.com/klimov-paul) - user's page, where "klimov-paul" - name of the user.
 - [https://github.com/illuminatech](https://github.com/illuminatech) - organization's page, where "illuminatech" - name of the organization. 
 
-Most likely in your project users and organizations will be stored in different database tables, so the Laravel routes
+Most likely, in your project users and organizations will be stored in different database tables, so the Laravel routes
 configuration for this case will look like following:
 
 ```php
@@ -164,7 +164,7 @@ use Illuminatech\ModelRoute\ModelRouteValidator;
 ### Performance Tuning <span id="performance-Tuning"></span>
 
 Remember that you should specify routes for any static pages **before** you write the route with model binding. While this
-extension allows routes matching to continue if binding does not exist, matching check comes with the cost of a database query.
+extension allows routes matching to continue, if binding does not exist, matching check comes with the cost of a database query.
 Thus in our 'GitHub' example routes to any predefined site sections like static pages, contact page or blog, should be
 described beforehand:
 
@@ -183,13 +183,13 @@ Route::get('blog', BlogController::class.'@index')->name('blog.index');
 Route::get('blog/{blogArticle}', BlogController::class.'@show')->name('blog.show');
 
 // only once all other routes are defined, we can use dynamic binding:
-Route::get('{user}', UserController::class.'@show')->name('users.show'); // match will cause a DB query against model `App\Models\User`
-Route::get('{organization}', OrganizationController::class.'@show')->name('organizations.show'); // match will cause a DB query against model `App\Models\Organization`
+Route::get('{user}', UserController::class.'@show')->name('users.show'); // matching check will cause a DB query against model `App\Models\User`
+Route::get('{organization}', OrganizationController::class.'@show')->name('organizations.show'); // matching check will cause a DB query against model `App\Models\Organization`
 ```
 
 Unfortunally, you can not always control the order of all your routes definition. Some packages like [Telescope](https://laravel.com/docs/6.x/telescope),
 [Horizon](https://laravel.com/docs/6.x/horizon) and [Nova](https://nova.laravel.com) register their own routes via separated service provider.
-Those routes may appear to be registered after our 'users.show' and 'organizations.show' ones.
+Those routes may appear to be registered after our "users.show" and "organizations.show" ones.
 You may manually exclude particular URL paths from the matching using `\Illuminatech\ModelRoute\ModelRouteValidator::setIgnoredUrlPaths()`.
 For example:
 
@@ -213,4 +213,4 @@ use Illuminatech\ModelRoute\ModelRouteValidator;
 ```
 
 With such configuration parsing of the URLs starting from '/telescope', '/horizon' or '/nova' will never trigger a database
-query around 'users.show' and 'organizations.show' routes.
+query around "users.show" and "organizations.show" routes.
