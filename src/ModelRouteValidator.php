@@ -160,7 +160,7 @@ class ModelRouteValidator implements ValidatorInterface
         foreach ($this->getBinders() as $parameterName => $binder) {
             if (in_array($parameterName, $routeVariables)) {
                 foreach ($this->getIgnoredUrlPaths() as $ignoredUrlPath) {
-                    if (Str::startsWith(trim($request->path(), '/'), trim($ignoredUrlPath, '/'))) {
+                    if (Str::startsWith(trim($request->path(), '/').'/', trim($ignoredUrlPath, '/').'/')) {
                         return false;
                     }
                 }

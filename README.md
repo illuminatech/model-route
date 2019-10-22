@@ -2,7 +2,7 @@
     <a href="https://github.com/illuminatech" target="_blank">
         <img src="https://avatars1.githubusercontent.com/u/47185924" height="100px">
     </a>
-    <h1 align="center">Laravel Model Route</h1>
+    <h1 align="center">Real Laravel Model Route Matching</h1>
     <br>
 </p>
 
@@ -207,6 +207,7 @@ use Illuminatech\ModelRoute\ModelRouteValidator;
         config('telescope.path'), // exclude Telescope URLs
         config('horizon.path'), // exclude Horizon URLs
         config('nova.path'), // exclude Nova URLs
+        'nova-api', // exclude Nova API URLs
     ])
     ->register();
 ```

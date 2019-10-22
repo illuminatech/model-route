@@ -1,7 +1,7 @@
 {
     "name": "illuminatech/model-route",
     "description": "Allows continuing route matching in case bound model does not exist",
-    "keywords": ["laravel", "routing", "route", "model", "slug"],
+    "keywords": ["laravel", "routing", "route", "model", "slug", "match", "matching"],
     "license": "BSD-3-Clause",
     "support": {
         "issues": "https://github.com/illuminatech/model-route/issues",

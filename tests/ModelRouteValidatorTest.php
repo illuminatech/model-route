@@ -122,7 +122,7 @@ class ModelRouteValidatorTest extends TestCase
             'slug' => 'item-slug',
         ]);
 
-        (new ModelRouteValidator())
+        $validator = (new ModelRouteValidator())
             ->setBinders([
                 'item' => Item::class.'@slug',
             ])
@@ -141,5 +141,10 @@ class ModelRouteValidatorTest extends TestCase
         });
 
         $this->assertEquals('fallback', $router->dispatch(Request::create($item->slug, 'GET'))->getContent());
+
+        $validator->setIgnoredUrlPaths([
+            'item',
+        ]);
+        $this->assertEquals('match', $router->dispatch(Request::create($item->slug, 'GET'))->getContent());
     }
 }
