@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "illuminate/routing": "^5.8 || ^6.0"
+        "illuminate/routing": "^5.8 || ^6.0 || ^7.0"
     },
     "require-dev": {
         "illuminate/database": "*",

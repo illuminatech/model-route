@@ -93,7 +93,7 @@ any organization name will be compared against first route ("users.show") only, 
 access organization's page.
 
 This extension solves this problem via extra URL matching validator - `\Illuminatech\ModelRoute\ModelRouteValidator`.
-Being registered it adds particular model existence as a matching condition for the routes. This allows to pass matching
+Being registered, it adds particular model existence as a matching condition for the routes. This allows to pass matching
 to the next route, in case model, bound to the current one, does not exist. The best place to register this validator will
 be your route service provider. For example:
 
