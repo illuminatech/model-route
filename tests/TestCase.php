@@ -2,15 +2,15 @@
 
 namespace Illuminatech\ModelRoute\Test;
 
+use Illuminate\Container\Container;
+use Illuminate\Contracts\Routing\Registrar;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Database\Capsule\Manager;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
-use Illuminate\Events\Dispatcher;
-use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Capsule\Manager;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Contracts\Routing\Registrar;
 
 /**
  * Base class for the test cases.

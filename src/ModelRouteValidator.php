@@ -7,10 +7,10 @@
 
 namespace Illuminatech\ModelRoute;
 
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
 use Illuminate\Routing\Matching\ValidatorInterface;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Str;
 
 /**
  * ModelRouteValidator allows check for the particular model binding existence, while matching routing.
@@ -198,7 +198,7 @@ class ModelRouteValidator implements ValidatorInterface
     protected function findParameterBinding($value, $binder)
     {
         if (is_string($binder)) {
-            /* @var $model \Illuminate\Database\Eloquent\Model */
+            /** @var $model \Illuminate\Database\Eloquent\Model */
             if (strpos($binder, '@') === false) {
 
                 $model = $binder;

@@ -3,9 +3,9 @@
 namespace Illuminatech\ModelRoute\Test;
 
 use Illuminate\Http\Request;
-use Illuminatech\ModelRoute\Test\Support\Item;
-use Illuminatech\ModelRoute\ModelRouteValidator;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminatech\ModelRoute\ModelRouteValidator;
+use Illuminatech\ModelRoute\Test\Support\Item;
 
 class ModelRouteValidatorTest extends TestCase
 {
