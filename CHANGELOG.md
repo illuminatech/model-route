@@ -1,6 +1,12 @@
 Laravel Real Model Route
 ========================
 
+1.0.3 Under Development
+------------------------
+
+- Enh: Added support for "illuminate/routing" 9.0 (klimov-paul)
+
+
 1.0.2, September 9, 2020
 ------------------------
 
