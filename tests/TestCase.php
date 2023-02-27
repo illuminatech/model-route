@@ -8,6 +8,8 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Database\Capsule\Manager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Routing\CallableDispatcher;
+use Illuminate\Routing\Contracts\CallableDispatcher as CallableDispatcherContract;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Facade;
@@ -93,6 +95,12 @@ class TestCase extends \PHPUnit\Framework\TestCase
         $this->app->singleton(Registrar::class, function () use ($router) {
             return $router;
         });
+
+        if (class_exists(CallableDispatcher::class)) {
+            $this->app->singleton(CallableDispatcherContract::class, function ($app) {
+                return new CallableDispatcher($app);
+            });
+        }
 
         return $router;
     }
